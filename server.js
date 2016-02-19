@@ -1,38 +1,43 @@
 /**
  * Created by chris.coleman on 2/17/2016.
  */
+
+// set up ==========================================
 var express = require('express');
-var path = require('path');
-var favicon = require('static-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var mongoose = require('mongoose');
-var nodemailer = require('nodemailer');
-var smtpTransport = require("nodemailer-smtp-transport")
-var mg = require('nodemailer-mailgun-transport');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var bcrypt = require('bcrypt-nodejs');
-var async = require('async');
-var crypto = require('crypto');
-var flash = require('express-flash');
+var app = express();                                    // create our express app
+var mongoose = require('mongoose');                     // mongoose for mongodb
+var morgan = require('morgan');                         // log requests to console
+var bodyParser = require('body-parser');                // pull information from HTML post
+var passport = require('passport');                     // passport for authentication
+var LocalStrategy = require('passport-local').Strategy; // passport local strategy
+var session = require('express-session');               // passport session mgmt for express
+var nodemailer = require('nodemailer');                 // nodemailer for email
+var smtpTransport = require("nodemailer-smtp-transport")    // nodemailer smtp
+var mg = require('nodemailer-mailgun-transport');       // transport for mailgun email provider (free)
+var path = require('path');                             // util to parse filepaths and urls
+var favicon = require('static-favicon');                // favicon serving middleware
+var cookieParser = require('cookie-parser');            // parses cookies!
+var bcrypt = require('bcrypt-nodejs');                  // hashes user passwords
+var async = require('async');                           // avoids dealing with nested callbacks (is this needed?)
+var crypto = require('crypto');                         // generates random tokens for pw reset
+var flash = require('express-flash');                   // flash messages for notifications
 
+var database = require('./config/database');            // database configuration
 
-var app = express();
-mongoose.connect('mongodb://admin:pw123@apollo.modulusmongo.net:27017/quwon7uX');
+// configuration =====================================
+mongoose.connect(database.url);
 
-// Middleware
+// middleware
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'public/views'));
 app.set('view engine', 'jade');
+
 app.use(favicon());
-app.use(logger('dev'));
+app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
-app.use(session({ secret: 'session secret key' }));
+app.use(session({ secret: 'session secret key' }));    //TODO: ???huh??
 app.use(flash());
 //order matters on these next 2
 app.use(passport.initialize());
@@ -104,45 +109,6 @@ app.post('/forgot', function (req, res, next) {
     });
 });
 
-
-//TODO: modularize
-var userSchema = new mongoose.Schema({
-    username: {type: String, required: true, unique: true},
-    email: {type: String, required: true, unique: true},
-    password: {type: String, required: true},
-    resetPasswordToken: String,
-    resetPasswordExpires: Date
-});
-
-//bcrypt save hashing middleware
-userSchema.pre('save', function (next) {
-    var user = this;
-    var SALT_FACTOR = 5;
-
-    if (!user.isModified('password')) return next();
-
-    bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
-        if (err) return next(err);
-
-        bcrypt.hash(user.password, salt, null, function (err, hash) {
-            if (err) return next(err);
-            user.password = hash;
-            next();
-        });
-    });
-});
-
-//compare password on login
-userSchema.methods.comparePassword = function (candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
-        if (err) return cb(err);
-        cb(null, isMatch);
-    });
-};
-
-var User = mongoose.model('User', userSchema);
-
-
 app.get('/', function(req, res){
     res.render('index', {
         title: 'Express',
@@ -199,8 +165,6 @@ app.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');
 });
-
-
 
 app.post('/reset/:token', function(req, res) {
     async.waterfall([
@@ -259,10 +223,44 @@ app.get('/reset/:token', function(req, res) {
     });
 });
 
+//TODO: modularize
+var userSchema = new mongoose.Schema({
+    username: {type: String, required: true, unique: true},
+    email: {type: String, required: true, unique: true},
+    password: {type: String, required: true},
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
+});
 
+//bcrypt save hashing middleware
+userSchema.pre('save', function (next) {
+    var user = this;
+    var SALT_FACTOR = 5;
 
+    if (!user.isModified('password')) return next();
 
-//TODO: modularize passport strategies
+    bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
+        if (err) return next(err);
+
+        bcrypt.hash(user.password, salt, null, function (err, hash) {
+            if (err) return next(err);
+            user.password = hash;
+            next();
+        });
+    });
+});
+
+//compare password on login
+userSchema.methods.comparePassword = function (candidatePassword, cb) {
+    bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
+        if (err) return cb(err);
+        cb(null, isMatch);
+    });
+};
+
+var User = mongoose.model('User', userSchema);
+
+//TODO: modularize passport
 passport.use(new LocalStrategy(function(username, password, done) {
     User.findOne({ username: username }, function(err, user) {
         if (err) return done(err);
@@ -277,7 +275,6 @@ passport.use(new LocalStrategy(function(username, password, done) {
     });
 }));
 
-//TODO: modularize with passport
 passport.serializeUser(function(user, done) {
     done(null, user.id);
 });
@@ -288,6 +285,7 @@ passport.deserializeUser(function(id, done) {
     });
 });
 
+// startup app
 app.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });
