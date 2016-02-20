@@ -4,7 +4,7 @@
 
 var passport = require('passport');                     // passport for authentication
 var LocalStrategy = require('passport-local').Strategy; // passport local strategy
-var user = require('../models/user');
+var user = require('../models/user');                   // user model
 
 var User = user.User;
 
