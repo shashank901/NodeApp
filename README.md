@@ -13,5 +13,5 @@ Currently supported functionality:
 * Login/Logout
 * Password Reset
 
-**Config.js.example
+# Config.js.example
 * Edit this file to suit your configuration
