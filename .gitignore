@@ -1,0 +1,9 @@
+
+# Dependency directories
+node_modules
+
+#configuration
+config.js
+
+#webstorm metadata
+.idea

@@ -11,6 +11,7 @@ var mg = require('nodemailer-mailgun-transport');       // transport for mailgun
 
 var passport = require('../middleware/passport').passport;          // passport middleware
 var user = require('../models/user');                               //User model
+var config = require('../config');                               //configuration metadata
 
 // expose the routes to our app with module.exports
 module.exports = function(app) {
@@ -105,13 +106,13 @@ module.exports = function(app) {
             function (token, user, done) {
 
                 // This is your API key that you retrieve from www.mailgun.com/cp (free up to 10K monthly emails)
+                var auth = config.mailgun_auth;
                 var auth = {
                     auth: {
                         api_key: 'key-9901bf3d7db4cc2015f053eca3ab3f78',
                         domain: 'sandbox4800aadfa17a40db985824c28c218a14.mailgun.org'
                     }
                 }
-
                 var transporter = nodemailer.createTransport(mg(auth));
 
                 var mailOptions = {

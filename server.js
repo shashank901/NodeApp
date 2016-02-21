@@ -13,7 +13,7 @@ var path = require('path');                             // util to parse filepat
 var favicon = require('static-favicon');                // favicon serving middleware
 var cookieParser = require('cookie-parser');            // parses cookies!
 var flash = require('express-flash');                   // flash messages for notifications
-var database = require('./config/database');            // database configuration
+var config = require('./config');            // configuration metadata
 var user = require('./models/user');                    // user model
 var passport = require('./middleware/passport').passport;        // passport middleware
 
@@ -23,7 +23,7 @@ app.set('views', path.join(__dirname, 'public/views'));
 app.set('view engine', 'jade');
 
 // middleware setup
-mongoose.connect(database.url);
+mongoose.connect(config.database_url);
 app.use(favicon());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
