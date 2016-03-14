@@ -12,3 +12,6 @@ Currently supported functionality:
 * Register New Users
 * Login/Logout
 * Password Reset
+
+Config.js.example
+* Edit this file to suit your configuration
