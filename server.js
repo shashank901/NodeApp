@@ -19,7 +19,7 @@ var passport = require('./middleware/passport').passport;        // passport mid
 
 // configuration =====================================
 app.set('port', process.env.PORT || 3000);
-app.set('views', path.join(__dirname, 'public/views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // middleware setup
@@ -37,6 +37,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 require('./routes/routes')(app);
+
+//This outputs legible HTML, turn it off for improved performance
+//if (app.get('env') === 'development') {
+    app.locals.pretty = true;
+//}
 
 // startup app
 app.listen(app.get('port'), function() {
