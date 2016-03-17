@@ -3,7 +3,7 @@
 /node_modules
 
 #configuration
-/config.js
+#/config.js
 
 #webstorm metadata
 /.idea
