@@ -7,29 +7,58 @@ html
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
     script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
   body
-    .navbar.navbar-inverse.navbar-static-top(role='navigation')
-      .container
-        .navbar-header
-          button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
-            span.sr-only Toggle navigation
-            span.icon-bar
-            span.icon-bar
-            span.icon-bar
-          a.navbar-brand(href='/') Project name
-        .collapse.navbar-collapse
-          ul.nav.navbar-nav
+    nav.navbar.navbar-inverse.navbar-static-top(role='navigation')
+      // Brand and toggle get grouped for better mobile display
+      .navbar-header
+        button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        a.navbar-brand(href='#') Project Name
+      .collapse.navbar-collapse
+        ul.nav.navbar-nav
+          li.active
+            a(href='#') Public Link 1
+          if user
+            li
+              a(href='#') Private Link
+          else
             li.active
-              a(href='/') Home
-            if user
-              li
-                a(href='/logout') Logout
-            else
-              li
-                a(href='/login') Login
-              li
-                a(href='/signup') Signup
+              a(href='#') Public Link 2
+        ul.nav.navbar-nav.navbar-right
+          if user
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown') #{user.username}
+                b.caret
+              ul.dropdown-menu(style='padding: 15px;min-width: 250px;')
                 li
-                  a(href='/forgot') Forgot Password
+                  input#sign-in-google.btn.btn-primary.btn-block(type='button', value='Profile')
+                li.divider
+                li
+                  a.btn.btn-info(href='/logout', role='button') Logout
+          else
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown')
+                | Have an account? Log in
+                b.caret
+              ul.dropdown-menu(style='padding: 15px;min-width: 250px;')
+                li
+                  .row
+                    .col-md-12
+                      form#login-nav.form(role='form', method='post', action='login', accept-charset='UTF-8')
+                        .form-group
+                          label.sr-only(for='exampleInputEmail2') Username
+                          input#exampleInputEmail2.form-control(type='text', name='username', placeholder='username', required='')
+                        .form-group
+                          label.sr-only(for='exampleInputPassword2') Password
+                          input#exampleInputPassword2.form-control(type='password', name='password', placeholder='Password', required='')
+                        .form-group
+                          button.btn.btn-success.btn-block(type='submit') Sign in
+                li.divider
+                li
+                  input#sign-in-twitter.btn.btn-primary.btn-block(type='button', value='Sign Up')
+
     .container
       if messages.error
         .alert.alert-danger
@@ -45,5 +74,5 @@ html
 
     footer(class='footer')
         .container
-          .text-muted "Copyright 20XX by Me"
+          .text-muted "Copyright 2016"
 

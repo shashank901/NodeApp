@@ -24,6 +24,27 @@ module.exports = function(app) {
         });
     });
 
+    app.post('/', function(req, res, next) {
+        passport.authenticate('local', function(err, user, info) {
+            if (err) {
+                return next(err);
+            }
+            if (!user) {
+                req.flash('error', 'No account with that email address exists.');
+                console.log("no user");
+                return res.redirect('/login')
+            }
+            req.logIn(user, function(err) {
+                console.log("user found");
+                if (err) {
+                    console.log("error");
+                    return next(err);
+                }
+                return res.redirect('/');
+            });
+        })(req, res, next);
+    });
+
     app.get('/signup', function(req, res) {
         res.render('signup', {
             user: req.user
@@ -55,6 +76,7 @@ module.exports = function(app) {
                 return next(err);
             }
             if (!user) {
+                req.flash('error', 'No account with that email address exists.');
                 console.log("no user");
                 return res.redirect('/login')
             }
