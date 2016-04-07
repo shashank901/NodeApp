@@ -17,13 +17,6 @@ var config = require('../config');                               //configuration
 module.exports = function(app) {
     var User = user.User;
 
-    app.get('/', function(req, res){
-        res.render('index', {
-            title: 'Express',
-            user: req.user
-        });
-    });
-
     app.post('/', function(req, res, next) {
         passport.authenticate('local', function(err, user, info) {
             if (err) {

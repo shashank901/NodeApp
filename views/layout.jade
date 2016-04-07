@@ -60,15 +60,16 @@ html
                   input#sign-in-twitter.btn.btn-primary.btn-block(type='button', value='Sign Up')
 
     .container
-      if messages.error
-        .alert.alert-danger
-          div= messages.error
-      if messages.info
-        .alert.alert-info
-          div= messages.info
-      if messages.success
-        .alert.alert-success
-          div= messages.success
+      if messages
+          if messages.error
+            .alert.alert-danger
+              div= messages.error
+          if messages.info
+            .alert.alert-info
+              div= messages.info
+          if messages.success
+            .alert.alert-success
+              div= messages.success
 
     block content
 

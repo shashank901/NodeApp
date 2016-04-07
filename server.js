@@ -17,6 +17,13 @@ var config = require('./config');            // configuration metadata
 var user = require('./models/user');                    // user model
 var passport = require('./middleware/passport').passport;        // passport middleware
 
+// Routes
+//require('./routes/routes')(app);
+var routes = require('./routes/users/index');
+app.use('/', routes);
+//var auth = require('./routes/auth');
+//app.use('/', auth);
+
 // configuration =====================================
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
@@ -35,8 +42,6 @@ app.use(passport.initialize());                         //Must come before sessi
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-require('./routes/routes')(app);
 
 //This outputs legible HTML, turn it off for improved performance
 //if (app.get('env') === 'development') {
