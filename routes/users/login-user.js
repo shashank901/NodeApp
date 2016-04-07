@@ -10,7 +10,7 @@ module.exports = function(req, res, next) {
         }
         if (!user) {
             //req.flash('error', 'No account with that email address exists.');
-            console.log("no user");
+            console.log("no user found");
             return res.redirect('/login')
         }
         req.logIn(user, function(err) {

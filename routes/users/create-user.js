@@ -1,6 +1,8 @@
 /**
  * Created by chris on 4/4/2016.
  */
+var passport = require('../../middleware/passport').passport;          // passport middleware
+var user = require('../../models/user');                               //User model
 
 module.exports = function(req, res) {
     var user = new User({
